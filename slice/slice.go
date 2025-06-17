@@ -4,7 +4,7 @@ package slice
 
 import "fmt"
 
-// if we want to use Inspect outside the slice package then we need to export it
+// if we want to use Inspect function outside the slice package, then we need to export it
 // making the first letter as uppercase would export
 
 func Inspect(name string, slice []int) {
