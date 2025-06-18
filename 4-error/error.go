@@ -19,5 +19,12 @@ func main() {
 		return
 	}
 
+	val, err := strconv.ParseInt("10", 10, 64)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	fmt.Println(val)
+
 	fmt.Println("some more important code that depends on i var", i)
 }
