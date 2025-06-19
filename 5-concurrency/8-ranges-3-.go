@@ -24,13 +24,13 @@ func main() {
 
 			}(i)
 		}
-	}()
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			wgWorker.Wait()
+			close(ch)
+		}()
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		wgWorker.Wait()
-		close(ch)
 	}()
 
 	wg.Add(1)
