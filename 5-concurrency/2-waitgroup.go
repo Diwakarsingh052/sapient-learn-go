@@ -12,12 +12,12 @@ func main() {
 
 	// waitgroup counter represents number of goroutine we are running
 	wg.Add(1)
-	go func() {
+	go func(id int) {
 		defer wg.Done() /// giving a guarantee that even
 		// in case of panic this would decrement the counter
 		fmt.Println("hello world")
 
-	}()
+	}(10) // () this is calling of the anonymous function
 
 	fmt.Println("some other code in main running")
 	wg.Wait() // wait until the counter is not 0
