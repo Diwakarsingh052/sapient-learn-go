@@ -8,8 +8,8 @@ import (
 )
 
 type student struct {
-	FirstName string `json:"first_name"`
-	Password  string `json:"-"` // - means ignore the field in json output
+	FirstName string `json:"first_name"` // json is a field tag, we are setting custom name for json output
+	Password  string `json:"-"`          // - means ignore the field in json output
 	Email     string `json:"email"`
 }
 
