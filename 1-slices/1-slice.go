@@ -23,4 +23,5 @@ func main() {
 
 	x := []int{1, 2, 3, 4, 5} // this can be used in the local scope only
 	fmt.Println(x)
+
 }
