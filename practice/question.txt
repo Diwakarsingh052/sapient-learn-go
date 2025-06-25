@@ -1,0 +1,109 @@
+q1. Create a stringops package with three files. The package should export one function that utilizes internal (unexported) functions.
+        Files in stringops Package:
+        File 1: strings.go
+        Exported Function: TrimSpaceAndUppercase(s1, s2 string) string
+        File 2: upper.go
+        Internal Function: toUpperCase(s string) string
+        File 3: trim.go
+        Internal Function: trimSpace(s string) string
+
+q2. Create a struct (Author)
+        Two Field:- Name, Books[slice]
+        Create two methods, one appends new books to the book slice , other prints the struct
+
+        Create a function that accepts the struct and append values to the book slice
+
+        Create a function that would accept the Books field, not the struct and append some more books
+
+
+Q3. Write a Go program that:
+    Creates an empty slice with an initial capacity of 1.
+    Appends integers from 1 to 1,000,000 to the slice.
+    Tracks and prints the capacity change every time the slice's capacity increases.
+    Prints the total number of capacity changes at the end.
+
+    Formula:= (currentCap-lastCap) / lastCap * 100
+    // Hint :- use type casting
+
+q4. Build a simple CLI calculator to get familiar with Go syntax and basic operations.
+    Create a new project named as cli
+    Create a package calc
+    Add functionalities of +, -, /, % (create these functionalities in 4 different files)
+    In the main.go file ask user to provide operation to be performed and two values
+    Note: User should pass these values from the command line.
+    E.g. + 10 20
+    Handle errors in the code and give useful error messages to the end user.
+
+            cli/
+            ├──cmd/
+            │  └── main.go
+            ├── calc/
+            │  └── add.go
+               └── sub.go
+               └── mod.go
+               └── multiply.go
+            ├── go.mod
+
+
+q5. Create a function named as StringManipulation.
+    StringManipulation accepts a function and string type as an argument, and it returns string value
+    Possible Functions that it can accept:- trimSpace, toUpper, greet
+
+    Create 3 functions trimSpace, toUpper, greet
+    TrimSpace:- TrimSpace returns a string, with all leading and trailing white space removed, as defined by Unicode.
+    ToUpper:- ToUpper returns string with all Unicode letters mapped to their upper case.
+    Greet: - It takes a name as input, add hello as greeting and return the greeting
+    Hint: use strings package for TrimSpace and ToUpper functionalities
+
+
+q6. Modify the above function to perform the following action
+    stringManipulation(trimSpace(), "\ngfdngbk \n"))
+    Instead of passing trimSpace you need to call the trimSpace function and make the program work
+    Hint: you need to return a function with the signature of what stringManipulation accepts as first parameter
+
+
+q7. Creating and Using Structs in Go
+        /*
+        Todo:
+         - Define a struct 'Book' with fields 'Title', 'Author', and 'Pages'.
+
+         - Create a function 'Read' which takes a pointer to a Book, and a number of pages to read.
+          After reading, the function should subtract the read pages from the total pages of the book.
+           Account for the case where the number of pages to read is more than the pages in the book.
+           In that case, just set the book's pages to 0.
+
+         - In the main function, create a new book and initialize it with a title, author, and the number of pages.
+         - Then, read some pages from the book and print the title, author, and remaining pages.
+
+        Hint: Use a pointer receiver in the 'Read' method to reflect changes on the original struct.
+        */
+
+q8. Create a slice with 3 random urls
+    Create a function doGetRequest()
+    doGetRequest:
+        It spins up 2 goroutines
+        1st goroutines do get request and put the url,resp,err inside one single channel
+        //1st goroutine spins up n number of goroutines for n number of urls (fanout pattern)
+        2nd goroutines fetch the values from the channel and perform following operations
+            -check err
+            -read body
+            -check if status code above 299
+            -and print url resp.Status
+
+
+q9. Develop a REST API for a task management system.
+   Use gin or chi
+# Task Management APIs
+   POST    /api/v1/tasks                 # Create a new task
+   GET     /api/v1/tasks/:id             # Get a specific task by ID
+   GET     /api/v1/tasks                 # Get all tasks (filter/sort optional)
+   PUT     /api/v1/tasks/:id             # Update task details
+   DELETE  /api/v1/tasks/:id             # Delete a task
+   PATCH   /api/v1/tasks/:id/status      # Update task status (e.g., In Progress, Done)
+   PATCH   /api/v1/tasks/:id/            # Update any field except id status
+
+   Store tasks in postgres
+   Add log, recovery(use built in from chi or gin), and traceId middleware
+   Organize your code in different packages
+ Bonus
+    Implement Partial updates
