@@ -1,0 +1,49 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+"""
+Author represents an author with their details
+"""
+type Author {
+  id: ID!
+  name1: String!
+  class: String!
+  bio: String
+}
+
+"""
+Query type defines all available queries in the API
+"""
+type Query {
+  # Get a specific author by ID
+  author(id: ID!): Author
+
+  # Get all authors
+  authors: [Author!]!
+
+
+}
+
+"""
+Input for creating a new author
+"""
+input NewAuthor {
+  name: String!
+  class: String!
+  bio: String
+}
+
+"""
+Mutation type defines all available mutations in the API
+"""
+type Mutation {
+  # Create a new author
+  createAuthor(input: NewAuthor!): Author!
+}
+
+
+#extend type Query{
+#    # Get a specific author by ID
+#    author(id: ID!): Author
+#}
