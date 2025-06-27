@@ -12,6 +12,11 @@ import (
 	"github.com/google/uuid"
 )
 
+// Name1 is the resolver for the name1 field.
+func (r *authorResolver) Name1(ctx context.Context, obj *models.Author) (string, error) {
+	return obj.Name, nil
+}
+
 // CreateAuthor is the resolver for the createAuthor field.
 func (r *mutationResolver) CreateAuthor(ctx context.Context, input models.NewAuthor) (*models.Author, error) {
 	// Lock for writing to prevent race conditions
@@ -24,7 +29,7 @@ func (r *mutationResolver) CreateAuthor(ctx context.Context, input models.NewAut
 	// Create a new author with the input data
 	author := &models.Author{
 		ID:    id,
-		Name1: input.Name,
+		Name:  input.Name,
 		Class: input.Class,
 		Bio:   input.Bio,
 	}
@@ -45,25 +50,15 @@ func (r *queryResolver) Authors(ctx context.Context) ([]*models.Author, error) {
 	return r.authorsList, nil
 }
 
+// Author returns AuthorResolver implementation.
+func (r *Resolver) Author() AuthorResolver { return &authorResolver{r} }
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+type authorResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//    it when you're done.
-//  - You have helper methods in this file. Move them out to keep these resolver files clean.
-/*
-	func (r *newAuthorResolver) Name(ctx context.Context, obj *models.NewAuthor, data string) error {
-	panic(fmt.Errorf("not implemented: Name - name"))
-}
-func (r *Resolver) NewAuthor() NewAuthorResolver { return &newAuthorResolver{r} }
-type newAuthorResolver struct{ *Resolver }
-*/

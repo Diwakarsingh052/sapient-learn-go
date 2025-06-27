@@ -39,6 +39,7 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Author() AuthorResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
 }
@@ -64,6 +65,9 @@ type ComplexityRoot struct {
 	}
 }
 
+type AuthorResolver interface {
+	Name1(ctx context.Context, obj *models.Author) (string, error)
+}
 type MutationResolver interface {
 	CreateAuthor(ctx context.Context, input models.NewAuthor) (*models.Author, error)
 }
@@ -502,7 +506,7 @@ func (ec *executionContext) _Author_name1(ctx context.Context, field graphql.Col
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Name1, nil
+		return ec.resolvers.Author().Name1(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -523,8 +527,8 @@ func (ec *executionContext) fieldContext_Author_name1(_ context.Context, field g
 	fc = &graphql.FieldContext{
 		Object:     "Author",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
 		},
@@ -2943,17 +2947,48 @@ func (ec *executionContext) _Author(ctx context.Context, sel ast.SelectionSet, o
 		case "id":
 			out.Values[i] = ec._Author_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "name1":
-			out.Values[i] = ec._Author_name1(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Author_name1(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
 			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "class":
 			out.Values[i] = ec._Author_class(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "bio":
 			out.Values[i] = ec._Author_bio(ctx, field, obj)
